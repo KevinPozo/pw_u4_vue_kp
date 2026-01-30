@@ -11,9 +11,27 @@
     </div>
 
     <div v-if="apiResponse" class="result-container">
-      <h3>Resultado:</h3>
-      <div class="json-viewer">
-        <pre>{{ formattedApiResponse }}</pre>
+      <div class="student-card">
+        <h3>Detalle del Estudiante</h3>
+        <div class="card-row">
+          <strong>ID:</strong> <span>{{ apiResponse.id }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Nombre:</strong> <span>{{ apiResponse.nombre }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Apellido:</strong> <span>{{ apiResponse.apellido }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Fecha Nacimiento:</strong>
+          <span>{{ apiResponse.fechaNacimiento }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Provincia:</strong> <span>{{ apiResponse.provincia }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Género:</strong> <span>{{ apiResponse.genero }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -29,18 +47,22 @@ export default {
       apiResponse: null,
     };
   },
-  computed: {
-    formattedApiResponse() {
-      if (!this.apiResponse) return "";
-      return JSON.stringify(this.apiResponse, null, 2);
-    },
-  },
   methods: {
     consultarPorId() {
       if (this.targetId) {
-        consultarPorIdFacade(this.targetId).then((response) => {
-          this.apiResponse = response;
-        });
+        this.apiResponse = null; // Limpiar resultado anterior
+        consultarPorIdFacade(this.targetId)
+          .then((response) => {
+            this.apiResponse = response;
+          })
+          .catch((error) => {
+            console.error("Error al consultar:", error);
+            if (error.response && error.response.status === 404) {
+              alert("Estudiante no encontrado con el ID: " + this.targetId);
+            } else {
+              alert("Ocurrió un error al consultar el estudiante.");
+            }
+          });
       }
     },
   },
@@ -72,14 +94,30 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
-.json-viewer {
-  background-color: #1e1e1e;
-  color: #ce9178;
-  padding: 15px;
-  border-radius: 5px;
-  overflow: auto;
+.student-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
-pre {
-  margin: 0;
+.student-card h3 {
+  margin-top: 0;
+  border-bottom: 2px solid #17a2b8;
+  padding-bottom: 10px;
+  color: #333;
+}
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.card-row:last-child {
+  border-bottom: none;
+}
+.card-row strong {
+  color: #555;
 }
 </style>

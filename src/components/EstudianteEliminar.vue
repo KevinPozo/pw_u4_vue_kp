@@ -29,11 +29,20 @@ export default {
   methods: {
     eliminar() {
       if (this.targetId) {
-        eliminarFacade(this.targetId).then(() => {
-          this.mensaje = "Se ha borrado exitosamente";
-          this.targetId = null;
-          setTimeout(() => (this.mensaje = null), 3000);
-        });
+        eliminarFacade(this.targetId)
+          .then(() => {
+            this.mensaje = "Se ha borrado exitosamente";
+            this.targetId = null;
+            setTimeout(() => (this.mensaje = null), 3000);
+          })
+          .catch((error) => {
+            console.error("Error al eliminar:", error);
+            if (error.response && error.response.status === 404) {
+              alert("No se puede eliminar: Estudiante no encontrado.");
+            } else {
+              alert("Ocurrió un error al intentar eliminar.");
+            }
+          });
       }
     },
   },

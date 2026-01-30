@@ -47,9 +47,27 @@
     </div>
 
     <div v-if="apiResponse" class="result-container">
-      <h3>Resultado:</h3>
-      <div class="json-viewer">
-        <pre>{{ formattedApiResponse }}</pre>
+      <div class="student-card">
+        <h3>Estudiante Actualizado</h3>
+        <div class="card-row">
+          <strong>ID:</strong> <span>{{ apiResponse.id }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Nombre:</strong> <span>{{ apiResponse.nombre }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Apellido:</strong> <span>{{ apiResponse.apellido }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Fecha Nac:</strong>
+          <span>{{ apiResponse.fechaNacimiento }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Provincia:</strong> <span>{{ apiResponse.provincia }}</span>
+        </div>
+        <div class="card-row">
+          <strong>Género:</strong> <span>{{ apiResponse.genero }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -72,12 +90,6 @@ export default {
       apiResponse: null,
     };
   },
-  computed: {
-    formattedApiResponse() {
-      if (!this.apiResponse) return "";
-      return JSON.stringify(this.apiResponse, null, 2);
-    },
-  },
   methods: {
     actualizar() {
       if (this.targetId) {
@@ -85,9 +97,18 @@ export default {
         if (body.fechaNacimiento && body.fechaNacimiento.length === 16) {
           body.fechaNacimiento += ":00";
         }
-        actualizarFacade(this.targetId, body).then((response) => {
-          this.apiResponse = response;
-        });
+        actualizarFacade(this.targetId, body)
+          .then((response) => {
+            this.apiResponse = response;
+          })
+          .catch((error) => {
+            console.error("Error al actualizar:", error);
+            if (error.response && error.response.status === 404) {
+              alert("No se puede actualizar: Estudiante no encontrado.");
+            } else {
+              alert("Ocurrió un error al intentar actualizar.");
+            }
+          });
       }
     },
   },
@@ -122,15 +143,26 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
-.json-viewer {
-  background-color: #1e1e1e;
-  color: #ce9178;
-  padding: 15px;
-  border-radius: 5px;
+.student-card {
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fff3cd;
   margin-top: 20px;
-  overflow: auto;
 }
-pre {
-  margin: 0;
+.student-card h3 {
+  margin-top: 0;
+  border-bottom: 2px solid #ffc107;
+  padding-bottom: 10px;
+  color: #856404;
+}
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #ffeeba;
+}
+.card-row:last-child {
+  border-bottom: none;
 }
 </style>
