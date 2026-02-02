@@ -1,46 +1,34 @@
-//No retornan un objeto como tal pero si retorna un grupo de codigos de estados
-import axios from "axios";
+import axios from "./axios-config";
+
 const consultarTodos = async () => {
-  return axios
-    .get("http://localhost:8081/matricula/api/v1.0/estudiantes")
-    .then((response) => {
-      return response.data;
-    });
+  return axios.get("/estudiantes").then((response) => {
+    return response.data;
+  });
 };
 const consultarPorId = (id) => {
-  return axios
-    .get(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`)
-    .then((response) => {
-      return response.data;
-    });
+  return axios.get(`/estudiantes/${id}`).then((response) => {
+    return response.data;
+  });
 };
 const guardar = async (body) => {
-  return axios
-    .post("http://localhost:8081/matricula/api/v1.0/estudiantes", body)
-    .then((response) => {
-      return response.data;
-    });
+  return axios.post("/estudiantes", body).then((response) => {
+    return response.data;
+  });
 };
 const actualizar = async (id, body) => {
-  return axios
-    .put(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`, body)
-    .then((response) => {
-      return response.data;
-    });
+  return axios.put(`/estudiantes/${id}`, body).then((response) => {
+    return response.data;
+  });
 };
 const actualizarParcial = async (id, body) => {
-  return axios
-    .patch(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`, body)
-    .then((response) => {
-      return response.data;
-    });
+  return axios.patch(`/estudiantes/${id}`, body).then((response) => {
+    return response.data;
+  });
 };
 const eliminar = async (id) => {
-  return axios
-    .delete(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`)
-    .then((response) => {
-      return response.data;
-    });
+  return axios.delete(`/estudiantes/${id}`).then((response) => {
+    return response.data;
+  });
 };
 
 export const consultarTodosFacade = async () => {
