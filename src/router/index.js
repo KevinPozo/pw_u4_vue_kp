@@ -43,6 +43,11 @@ const routes = [
     name: "estudiantes-eliminar",
     component: () => import("../views/EstudianteEliminarView.vue"),
   },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("../views/LoginView.vue"),
+  },
 ];
 
 const router = createRouter({

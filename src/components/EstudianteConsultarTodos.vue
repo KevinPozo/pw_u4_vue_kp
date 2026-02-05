@@ -46,7 +46,13 @@ export default {
     };
   },
   async mounted() {
-    this.token = await getTokenFacade("admin", "admin");
+    this.token = sessionStorage.getItem("token");
+    if (!this.token) {
+      alert("No hay token. Por favor inicie sesión.");
+      this.$router.push("/login"); // Redirigir al login si no hay token
+    } else {
+      // Opcional: Cargar datos inmediatamente si se desea
+    }
   },
   methods: {
     consultarTodos() {
