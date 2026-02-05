@@ -39,19 +39,24 @@
 
 <script>
 import { consultarPorIdFacade } from "../clients/Matriculaclient";
+import { getTokenFacade } from "../clients/AuthClient";
 
 export default {
   data() {
     return {
       targetId: null,
       apiResponse: null,
+      token: null,
     };
+  },
+  async mounted() {
+    this.token = await getTokenFacade("admin", "admin");
   },
   methods: {
     consultarPorId() {
-      if (this.targetId) {
+      if (this.targetId && this.token) {
         this.apiResponse = null; // Limpiar resultado anterior
-        consultarPorIdFacade(this.targetId)
+        consultarPorIdFacade(this.targetId, this.token)
           .then((response) => {
             this.apiResponse = response;
           })

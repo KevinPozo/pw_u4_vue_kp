@@ -18,18 +18,23 @@
 
 <script>
 import { eliminarFacade } from "../clients/Matriculaclient";
+import { getTokenFacade } from "../clients/AuthClient";
 
 export default {
   data() {
     return {
       targetId: null,
       mensaje: null,
+      token: null,
     };
+  },
+  async mounted() {
+    this.token = await getTokenFacade("admin", "admin");
   },
   methods: {
     eliminar() {
-      if (this.targetId) {
-        eliminarFacade(this.targetId)
+      if (this.targetId && this.token) {
+        eliminarFacade(this.targetId, this.token)
           .then(() => {
             this.mensaje = "Se ha borrado exitosamente";
             this.targetId = null;

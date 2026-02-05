@@ -36,18 +36,25 @@
 
 <script>
 import { consultarTodosFacade } from "../clients/Matriculaclient";
+import { getTokenFacade } from "../clients/AuthClient";
 
 export default {
   data() {
     return {
       apiResponse: null,
+      token: null,
     };
+  },
+  async mounted() {
+    this.token = await getTokenFacade("admin", "admin");
   },
   methods: {
     consultarTodos() {
-      consultarTodosFacade().then((response) => {
-        this.apiResponse = response;
-      });
+      if (this.token) {
+        consultarTodosFacade(this.token).then((response) => {
+          this.apiResponse = response;
+        });
+      }
     },
   },
 };

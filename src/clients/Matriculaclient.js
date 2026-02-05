@@ -1,51 +1,77 @@
 import axios from "./axios-config";
+const URL = "http://localhost:8081/matricula/api/v1.0/estudiantes";
 
-const consultarTodos = async () => {
-  return axios.get("/estudiantes").then((response) => {
-    return response.data;
-  });
+const consultarTodos = async (token) => {
+  return axios
+    .get(URL, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
-const consultarPorId = (id) => {
-  return axios.get(`/estudiantes/${id}`).then((response) => {
-    return response.data;
-  });
+const consultarPorId = (id, token) => {
+  return axios
+    .get(`${URL}/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
-const guardar = async (body) => {
-  return axios.post("/estudiantes", body).then((response) => {
-    return response.data;
-  });
+const guardar = async (body, token) => {
+  return axios
+    .post(`${URL}`, body, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
-const actualizar = async (id, body) => {
-  return axios.put(`/estudiantes/${id}`, body).then((response) => {
-    return response.data;
-  });
-};
-const actualizarParcial = async (id, body) => {
-  return axios.patch(`/estudiantes/${id}`, body).then((response) => {
-    return response.data;
-  });
-};
-const eliminar = async (id) => {
-  return axios.delete(`/estudiantes/${id}`).then((response) => {
-    return response.data;
-  });
+const actualizar = async (id, body, token) => {
+  return axios
+    .put(`${URL}/${id}`, body, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
 
-export const consultarTodosFacade = async () => {
-  return await consultarTodos();
+const actualizarParcial = async (id, body, token) => {
+  return axios
+    .patch(`${URL}/${id}`, body, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
-export const consultarPorIdFacade = async (id) => {
-  return await consultarPorId(id);
+const eliminar = async (id, token) => {
+  return axios
+    .delete(`${URL}/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
-export const guardarFacade = async (body) => {
-  return await guardar(body);
+
+export const consultarTodosFacade = async (token) => {
+  return await consultarTodos(token);
 };
-export const actualizarFacade = async (id, body) => {
-  return await actualizar(id, body);
+export const consultarPorIdFacade = async (id, token) => {
+  return await consultarPorId(id, token);
 };
-export const actualizarParcialFacade = async (id, body) => {
-  return await actualizarParcial(id, body);
+export const guardarFacade = async (body, token) => {
+  return await guardar(body, token);
 };
-export const eliminarFacade = async (id) => {
-  return await eliminar(id);
+export const actualizarFacade = async (id, body, token) => {
+  return await actualizar(id, body, token);
+};
+export const actualizarParcialFacade = async (id, body, token) => {
+  return await actualizarParcial(id, body, token);
+};
+export const eliminarFacade = async (id, token) => {
+  return await eliminar(id, token);
 };

@@ -12,7 +12,7 @@ const getToken = async (username, password) => {
         password: password,
       },
     })
-    .then((response) => response.data);
+    .then((response) => response.data.accessToken);
 };
 
 export const getTokenFacade = async (username, password) => {

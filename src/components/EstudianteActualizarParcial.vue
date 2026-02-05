@@ -60,6 +60,7 @@
 
 <script>
 import { actualizarParcialFacade } from "../clients/Matriculaclient";
+import { getTokenFacade } from "../clients/AuthClient";
 
 export default {
   data() {
@@ -71,11 +72,15 @@ export default {
       provincia: "",
       genero: "",
       apiResponse: null,
+      token: null,
     };
+  },
+  async mounted() {
+    this.token = await getTokenFacade("admin", "admin");
   },
   methods: {
     actualizarParcial() {
-      if (this.targetId) {
+      if (this.targetId && this.token) {
         const body = {};
         if (this.nombre) body.nombre = this.nombre;
         if (this.apellido) body.apellido = this.apellido;
@@ -94,7 +99,7 @@ export default {
 
         console.log("Enviando PATCH con body:", body);
 
-        actualizarParcialFacade(this.targetId, body)
+        actualizarParcialFacade(this.targetId, body, this.token)
           .then((response) => {
             console.log("Respuesta servidor:", response);
             if (response) {

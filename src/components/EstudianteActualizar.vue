@@ -75,6 +75,7 @@
 
 <script>
 import { actualizarFacade } from "../clients/Matriculaclient";
+import { getTokenFacade } from "../clients/AuthClient";
 
 export default {
   data() {
@@ -88,16 +89,20 @@ export default {
         genero: "",
       },
       apiResponse: null,
+      token: null,
     };
+  },
+  async mounted() {
+    this.token = await getTokenFacade("admin", "admin");
   },
   methods: {
     actualizar() {
-      if (this.targetId) {
+      if (this.targetId && this.token) {
         const body = { ...this.estudiante };
         if (body.fechaNacimiento && body.fechaNacimiento.length === 16) {
           body.fechaNacimiento += ":00";
         }
-        actualizarFacade(this.targetId, body)
+        actualizarFacade(this.targetId, body, this.token)
           .then((response) => {
             this.apiResponse = response;
           })

@@ -49,6 +49,7 @@
 
 <script>
 import { guardarFacade } from "../clients/Matriculaclient";
+import { getTokenFacade } from "../clients/AuthClient";
 
 export default {
   data() {
@@ -61,7 +62,11 @@ export default {
         genero: "",
       },
       mensaje: null,
+      token: null,
     };
+  },
+  async mounted() {
+    this.token = await getTokenFacade("admin", "admin");
   },
   methods: {
     guardar() {
@@ -69,11 +74,13 @@ export default {
       if (body.fechaNacimiento && body.fechaNacimiento.length === 16) {
         body.fechaNacimiento += ":00";
       }
-      guardarFacade(body).then(() => {
-        this.mensaje = "Se ha guardado exitosamente";
-        this.limpiar();
-        setTimeout(() => (this.mensaje = null), 3000);
-      });
+      if (this.token) {
+        guardarFacade(body, this.token).then(() => {
+          this.mensaje = "Se ha guardado exitosamente";
+          this.limpiar();
+          setTimeout(() => (this.mensaje = null), 3000);
+        });
+      }
     },
     limpiar() {
       this.estudiante = {
