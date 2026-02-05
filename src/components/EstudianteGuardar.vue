@@ -40,18 +40,19 @@
       </div>
       <button @click="guardar">Guardar</button>
     </div>
-
-    <div v-if="mensaje" class="success-box">
-      {{ mensaje }}
-    </div>
   </div>
 </template>
 
 <script>
 import { guardarFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
+import { useNotificationStore } from "./NotificationStore";
 
 export default {
+  setup() {
+    const { addNotification } = useNotificationStore();
+    return { addNotification };
+  },
   data() {
     return {
       estudiante: {
@@ -61,14 +62,13 @@ export default {
         provincia: "",
         genero: "",
       },
-      mensaje: null,
       token: null,
     };
   },
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      alert("No hay token. Por favor inicie sesión.");
+      this.addNotification("No hay token. Por favor inicie sesión.", "error");
       this.$router.push("/login");
     }
   },
@@ -79,11 +79,15 @@ export default {
         body.fechaNacimiento += ":00";
       }
       if (this.token) {
-        guardarFacade(body, this.token).then(() => {
-          this.mensaje = "Se ha guardado exitosamente";
-          this.limpiar();
-          setTimeout(() => (this.mensaje = null), 3000);
-        });
+        guardarFacade(body, this.token)
+          .then(() => {
+            this.addNotification("Se ha guardado exitosamente", "success");
+            this.limpiar();
+          })
+          .catch((error) => {
+            console.error("Error al guardar:", error);
+            this.addNotification("Error al guardar estudiante.", "error");
+          });
       }
     },
     limpiar() {
@@ -129,14 +133,5 @@ button {
 }
 button:hover {
   background-color: #218838;
-}
-.success-box {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  text-align: center;
 }
 </style>

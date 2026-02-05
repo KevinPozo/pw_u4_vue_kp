@@ -76,8 +76,13 @@
 <script>
 import { actualizarFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
+import { useNotificationStore } from "./NotificationStore";
 
 export default {
+  setup() {
+    const { addNotification } = useNotificationStore();
+    return { addNotification };
+  },
   data() {
     return {
       targetId: null,
@@ -95,7 +100,7 @@ export default {
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      alert("No hay token. Por favor inicie sesión.");
+      this.addNotification("No hay token. Por favor inicie sesión.", "error");
       this.$router.push("/login");
     }
   },
@@ -109,15 +114,30 @@ export default {
         actualizarFacade(this.targetId, body, this.token)
           .then((response) => {
             this.apiResponse = response;
+            this.addNotification(
+              "Estudiante actualizado correctamente",
+              "success",
+            );
           })
           .catch((error) => {
             console.error("Error al actualizar:", error);
             if (error.response && error.response.status === 404) {
-              alert("No se puede actualizar: Estudiante no encontrado.");
+              this.addNotification(
+                "No se puede actualizar: Estudiante no encontrado.",
+                "error",
+              );
             } else {
-              alert("Ocurrió un error al intentar actualizar.");
+              this.addNotification(
+                "Ocurrió un error al intentar actualizar.",
+                "error",
+              );
             }
           });
+      } else {
+        this.addNotification(
+          "Por favor ingrese un ID y asegúrese de estar logueado.",
+          "info",
+        );
       }
     },
   },

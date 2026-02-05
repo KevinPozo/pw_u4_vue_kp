@@ -9,29 +9,29 @@
       />
       <button @click="eliminar">Eliminar</button>
     </div>
-
-    <div v-if="mensaje" class="success-box">
-      {{ mensaje }}
-    </div>
   </div>
 </template>
 
 <script>
 import { eliminarFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
+import { useNotificationStore } from "./NotificationStore";
 
 export default {
+  setup() {
+    const { addNotification } = useNotificationStore();
+    return { addNotification };
+  },
   data() {
     return {
       targetId: null,
-      mensaje: null,
       token: null,
     };
   },
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      alert("No hay token. Por favor inicie sesión.");
+      this.addNotification("No hay token. Por favor inicie sesión.", "error");
       this.$router.push("/login");
     }
   },
@@ -40,18 +40,25 @@ export default {
       if (this.targetId && this.token) {
         eliminarFacade(this.targetId, this.token)
           .then(() => {
-            this.mensaje = "Se ha borrado exitosamente";
+            this.addNotification("Se ha borrado exitosamente", "success");
             this.targetId = null;
-            setTimeout(() => (this.mensaje = null), 3000);
           })
           .catch((error) => {
             console.error("Error al eliminar:", error);
             if (error.response && error.response.status === 404) {
-              alert("No se puede eliminar: Estudiante no encontrado.");
+              this.addNotification(
+                "No se puede eliminar: Estudiante no encontrado.",
+                "error",
+              );
             } else {
-              alert("Ocurrió un error al intentar eliminar.");
+              this.addNotification(
+                "Ocurrió un error al intentar eliminar.",
+                "error",
+              );
             }
           });
+      } else {
+        this.addNotification("El ID es obligatorio", "info");
       }
     },
   },
@@ -85,14 +92,5 @@ button {
 }
 button:hover {
   background-color: #c82333;
-}
-.success-box {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  text-align: center;
 }
 </style>

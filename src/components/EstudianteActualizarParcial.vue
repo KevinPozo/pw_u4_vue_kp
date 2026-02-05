@@ -61,8 +61,13 @@
 <script>
 import { actualizarParcialFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
+import { useNotificationStore } from "./NotificationStore";
 
 export default {
+  setup() {
+    const { addNotification } = useNotificationStore();
+    return { addNotification };
+  },
   data() {
     return {
       targetId: null,
@@ -78,7 +83,7 @@ export default {
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      alert("No hay token. Por favor inicie sesión.");
+      this.addNotification("No hay token. Por favor inicie sesión.", "error");
       this.$router.push("/login");
     }
   },
@@ -97,7 +102,13 @@ export default {
         }
 
         if (Object.keys(body).length === 0) {
-          alert("Debe llenar al menos un campo para actualizar.");
+          if (Object.keys(body).length === 0) {
+            this.addNotification(
+              "Debe llenar al menos un campo para actualizar.",
+              "info",
+            );
+            return;
+          }
           return;
         }
 
@@ -108,16 +119,20 @@ export default {
             console.log("Respuesta servidor:", response);
             if (response) {
               this.apiResponse = response;
+              this.addNotification("Actualización parcial exitosa", "success");
             } else {
-              alert("Actualización exitosa (Servidor no retornó contenido)");
+              this.addNotification(
+                "Actualización exitosa (Servidor no retornó contenido)",
+                "success",
+              );
             }
           })
           .catch((error) => {
             console.error("Error al actualizar:", error);
-            alert("Error al actualizar: " + error);
+            this.addNotification("Error al actualizar: " + error, "error");
           });
       } else {
-        alert("El ID es obligatorio");
+        this.addNotification("El ID es obligatorio", "info");
       }
     },
   },

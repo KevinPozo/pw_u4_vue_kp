@@ -9,8 +9,19 @@
     <router-link to="/estudiantes-parcial">Parcial</router-link> |
     <router-link to="/estudiantes-eliminar">Eliminar</router-link>
   </nav>
+  <NotificationContainer />
   <router-view />
 </template>
+
+<script>
+import NotificationContainer from "./components/NotificationContainer.vue";
+
+export default {
+  components: {
+    NotificationContainer,
+  },
+};
+</script>
 
 <style>
 #app {

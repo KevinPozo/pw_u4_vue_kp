@@ -40,8 +40,13 @@
 <script>
 import { consultarPorIdFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
+import { useNotificationStore } from "./NotificationStore";
 
 export default {
+  setup() {
+    const { addNotification } = useNotificationStore();
+    return { addNotification };
+  },
   data() {
     return {
       targetId: null,
@@ -52,7 +57,7 @@ export default {
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      alert("No hay token. Por favor inicie sesión.");
+      this.addNotification("No hay token. Por favor inicie sesión.", "error");
       this.$router.push("/login");
     }
   },
@@ -67,9 +72,15 @@ export default {
           .catch((error) => {
             console.error("Error al consultar:", error);
             if (error.response && error.response.status === 404) {
-              alert("Estudiante no encontrado con el ID: " + this.targetId);
+              this.addNotification(
+                "Estudiante no encontrado con el ID: " + this.targetId,
+                "error",
+              );
             } else {
-              alert("Ocurrió un error al consultar el estudiante.");
+              this.addNotification(
+                "Ocurrió un error al consultar el estudiante.",
+                "error",
+              );
             }
           });
       }

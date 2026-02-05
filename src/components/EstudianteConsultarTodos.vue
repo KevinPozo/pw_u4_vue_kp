@@ -37,8 +37,13 @@
 <script>
 import { consultarTodosFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
+import { useNotificationStore } from "./NotificationStore";
 
 export default {
+  setup() {
+    const { addNotification } = useNotificationStore();
+    return { addNotification };
+  },
   data() {
     return {
       apiResponse: null,
@@ -48,7 +53,7 @@ export default {
   async mounted() {
     this.token = sessionStorage.getItem("token");
     if (!this.token) {
-      alert("No hay token. Por favor inicie sesión.");
+      this.addNotification("No hay token. Por favor inicie sesión.", "error");
       this.$router.push("/login"); // Redirigir al login si no hay token
     } else {
       // Opcional: Cargar datos inmediatamente si se desea
