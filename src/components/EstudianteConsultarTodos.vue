@@ -37,11 +37,11 @@
 <script>
 import { consultarTodosFacade } from "../clients/Matriculaclient";
 import { getTokenFacade } from "../clients/AuthClient";
-import { useNotificationStore } from "./NotificationStore";
+import { inject } from "vue";
 
 export default {
   setup() {
-    const { addNotification } = useNotificationStore();
+    const addNotification = inject("addNotification");
     return { addNotification };
   },
   data() {

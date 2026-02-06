@@ -7,30 +7,27 @@
         :message="notification.message"
         :type="notification.type"
         :timeout="notification.timeout"
-        @close="remove(notification.id)"
+        @close="$emit('remove', notification.id)"
       />
     </transition-group>
   </div>
 </template>
 
 <script>
-import { useNotificationStore } from "./NotificationStore";
 import NotificationToast from "./NotificationToast.vue";
-import { computed } from "vue";
 
 export default {
   name: "NotificationContainer",
   components: {
     NotificationToast,
   },
-  setup() {
-    const { state, removeNotification } = useNotificationStore();
-
-    return {
-      notifications: computed(() => state.notifications),
-      remove: removeNotification,
-    };
+  props: {
+    notifications: {
+      type: Array,
+      required: true,
+    },
   },
+  emits: ["remove"],
 };
 </script>
 

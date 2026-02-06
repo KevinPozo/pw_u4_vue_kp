@@ -7,7 +7,7 @@ const routes = [
     name: "home",
     component: HomeView,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
       esPublica: false,
     },
   },
@@ -87,13 +87,19 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const token = sessionStorage.getItem("token");
-  if (to.meta.requiresAuth && !token) {
-    //next({ name: "login" });
-    console.log("redirige a login");
+  if (to.meta.requiresAuth) {
+    const estaAutenticado = sessionStorage.getItem("estaAutenticado");
+    const token = sessionStorage.getItem("token");
+
+    if (!estaAutenticado || !token) {
+      console.log("Redirigiendo al Login");
+      next({ name: "login" });
+    } else {
+      next();
+    }
   } else {
-    //next();
-    console.log("NO redirige a login");
+    console.log("Pase libre");
+    next();
   }
 });
 
